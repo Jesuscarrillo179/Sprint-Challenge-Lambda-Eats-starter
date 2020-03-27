@@ -10,9 +10,9 @@ const App = () => {
       <p>You can remove this code and create your own header</p>
       <Link to="/">Home</Link>
       <br/>
-      <Link to="/form">Order</Link>
+      <Link to="/pizza">Order</Link>
       <Route exact path="/" component={Home}/>
-      <Route path="/form" component={Form}/>
+      <Route path="/pizza" component={Form}/>
     </>
   );
 };

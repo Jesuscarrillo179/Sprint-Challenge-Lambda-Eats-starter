@@ -1,14 +1,23 @@
-import React from "react";
+import React, { useState }from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
+import axios from "axios";
 
 const schema = yup.object().shape({
-    name: yup.string().required("You must provide a name.").min(2,"Your name is too short.")
+    name: yup.string().required("You must provide a name.").min(2,"Your name is too short."),
+    instructions: yup.string().required("You must provide instructions.")
 })
 
 export default function Form(){
+    const [post, setPost] = useState([]);
     const {register, handleSubmit, errors} =useForm({validationSchema: schema})
-    const onSubmit = data => {console.log(data)}
+    const onSubmit = data => {
+       axios.post("https://reqres.in/api/users", data)
+       .then(res =>{
+            setPost([data])
+       })
+       .catch(err => console.log("something went wrong!", err.response)) 
+    }
     return(
         <form onSubmit={handleSubmit(onSubmit)}>
             <label htmlFor="Customer Name">Customer Name:</label>
@@ -38,16 +47,18 @@ export default function Form(){
                 <label htmlFor="ham">ham</label><br/>
             <label htmlFor="Sauce">Sauce</label><br/>
                 <input id="original" type="radio" name="sauce" value="original" ref={register}/>
-                <label htmlFor="original">original</label><br/>
-                <input id="barbeque" type="radio" name="sauce" value="barbeque" ref={register}/>
+                <label htmlFor="original" >original</label><br/>
+                <input id="barbeque" type="radio" name="sauce" value="barbeque" ref={register} />
                 <label htmlFor="barbeque">barbeque</label><br/>
                 <input id="ranch" type="radio" name="sauce" value="ranch" ref={register}/>
                 <label htmlFor="garlic ranch">garlic ranch</label><br/>
                 <input id="alfredo" type="radio" name="sauce" value="alfredo" ref={register}/>
                 <label htmlFor="spinach alfredo">spinach alfredo</label><br/>
             <label htmlFor="Instructions">Special Instructions:</label><br/>
-                <textarea id="instructions" name="instructions" placeholder="Special Instructions"  ref={register}/><br/>
+                <textarea id="instructions" name="instructions" placeholder="Special Instructions"  ref={register}/>
+                {errors.instructions && <p className="error">{errors.instructions.message}</p>}<br/>
             <input type="submit"/>
+            <pre>{JSON.stringify(post, null)}</pre>
         </form>
     )
 }
